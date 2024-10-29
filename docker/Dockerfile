@@ -14,8 +14,8 @@ RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main r
 RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse" >>/etc/apt/sources.list
 RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse" >>/etc/apt/sources.list
 RUN apt-key del 7fa2af80
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/$distro/$arch/cuda-keyring_1.0-1_all.deb
-RUN dpkg -i cuda-keyring_1.0-1_all.deb
+RUN apt-key adv --fetch-keys  https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80 
 
 RUN apt-get update
 RUN apt-get install -y ffmpeg libsm6 libxext6 git ninja-build libglib2.0-0 libsm6 libxrender-dev libxext6 \
@@ -29,8 +29,10 @@ RUN pip install mmsegmentation==0.18.0
 
 # Install MMDetection3D
 RUN conda clean --all
-RUN git clone https://github.com/open-mmlab/mmdetection3d.git /mmdetection3d
-WORKDIR /mmdetection3d
-ENV FORCE_CUDA="1"
-RUN pip install -r requirements/build.txt
-RUN pip install --no-cache-dir -e .
+
+# 以下部分会拉最新的mmdet3d代码，不适合bevformer系列需求的0.17.2.且安装失败率极高，请进入docker后手动安装。
+# RUN git clone https://github.com/open-mmlab/mmdetection3d.git /mmdetection3d
+# WORKDIR /mmdetection3d
+# ENV FORCE_CUDA="1"
+# RUN pip install -r requirements/build.txt
+# RUN pip install --no-cache-dir -e .
